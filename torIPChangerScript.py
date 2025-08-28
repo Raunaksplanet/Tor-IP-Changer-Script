@@ -5,6 +5,7 @@ import socket
 import time
 import shutil
 import requests
+import argparse
 from stem import Signal
 from stem.control import Controller
 
@@ -126,44 +127,105 @@ def continuous_ip_change(interval=10):
             controller.close()
         print("[+] Controller connection closed")
 
+def parse_arguments():
+    """Parse command line arguments using argparse"""
+    parser = argparse.ArgumentParser(
+        description="Tor IP Changer Script - Change your IP address using Tor",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  sudo python3 main.py --setup                          # Install dependencies and configure Tor
+  sudo python3 main.py --setup --single                 # Setup and change IP once
+  sudo python3 main.py --setup --continuous             # Setup and change IP every 10 seconds
+  sudo python3 main.py --setup --continuous -i 5       # Setup and change IP every 5 seconds
+  sudo python3 main.py --continuous -i 30               # Change IP every 30 seconds (no setup)
+        """
+    )
+    
+    # action arguments
+    parser.add_argument(
+        "--setup", "--break",
+        action="store_true",
+        help="Install dependencies and configure Tor"
+    )
+    
+    # operation mode arguments (mutually exclusive)
+    mode_group = parser.add_mutually_exclusive_group()
+    mode_group.add_argument(
+        "--single",
+        action="store_true",
+        help="Change IP once and exit (default behavior)"
+    )
+    mode_group.add_argument(
+        "--continuous", "--loop",
+        action="store_true",
+        help="Continuously change IP at specified intervals"
+    )
+    
+    # optional arguments
+    parser.add_argument(
+        "-i", "--interval",
+        type=int,
+        default=10,
+        metavar="SECONDS",
+        help="Interval between IP changes in continuous mode (default: 10 seconds)"
+    )
+    
+    parser.add_argument(
+        "--check-ip",
+        action="store_true",
+        help="Only check current IP address without changing it"
+    )
+    
+    return parser.parse_args()
+
 def main():
-    if "--break" in sys.argv:
+    args = parse_arguments()
+    
+    print("Tor IP Changer Script")
+    print("=" * 40)
+    
+    # handle setup if requested
+    if args.setup:
         install_dependencies()
         configure_tor()
-        
-        # Check if user wants continuous IP rotation
-        if "--continuous" in sys.argv or "--loop" in sys.argv:
-            # Get interval from command line or use default 10 seconds
-            interval = 10
-            try:
-                interval_index = sys.argv.index("--interval")
-                if interval_index + 1 < len(sys.argv):
-                    interval = int(sys.argv[interval_index + 1])
-            except (ValueError, IndexError):
-                pass
-            
-            continuous_ip_change(interval)
-        else:
-            # Single IP change (original behavior)
-            controller = None
-            try:
-                controller = connect_to_tor()
-                if not controller:
-                    print("[!] Tor controller unavailable. Exiting.")
-                    return
+        print()
 
-                print(f"[+] Current IP: {get_ip()}")
-                renew_identity(controller)
+    # handle IP check only
+    if args.check_ip:
+        print(f"[+] Current IP: {get_ip()}")
+        return
+    
+    if args.continuous:
+        # validate interval
+        if args.interval < 1:
+            print("[-] Error: Interval must be at least 1 second")
+            return
+            
+        print(f"[*] Continuous mode selected with {args.interval} second intervals")
+        continuous_ip_change(args.interval)
+        
+    else:
+        # Single IP change (default behavior)
+        print("[*] Single IP change mode")
+        controller = None
+        try:
+            controller = connect_to_tor()
+            if not controller:
+                print("[!] Tor controller unavailable. Exiting.")
+                print("[!] Try running with --setup flag to configure Tor first.")
+                return
+
+            print(f"[+] Current IP: {get_ip()}")
+            if renew_identity(controller):
                 print(f"[+] New IP: {get_ip()}")
-            finally:
-                if controller:
-                    controller.close()
+            else:
+                print("[-] Failed to change IP")
+        except Exception as e:
+            print(f"[-] Error: {e}")
+        finally:
+            if controller:
+                controller.close()
 
 if __name__ == "__main__":
-    print("Tor IP Changer Script")
-    print("Usage:")
-    print("  sudo python3 main.py --break --continuous          # Change IP every 10 seconds")
-    print("  sudo python3 main.py --break --continuous --interval 5  # Change IP every 5 seconds")
-    print("  sudo python3 main.py --break                       # Change IP once and exit")
-    print()
     main()
