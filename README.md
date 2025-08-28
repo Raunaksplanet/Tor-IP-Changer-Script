@@ -26,31 +26,48 @@ The Tor IP Changer Script is a Python utility designed to automate the process o
 ## Installation
 
 1. Clone or download the script to your local machine
-2. Make the script executable if desired:
-   ```bash
-   chmod +x main.py
-   ```
+
+```bash
+git clone https://github.com/Raunaksplanet/Tor-IP-Changer-Script.git
+```
+
+2. Go to the directory
+```bash
+cd Tor-IP-Changer-Script
+```
+
+3. Install the dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Make the script executable if desired: 
+```bash
+chmod +x torIPChangerScript.py
+```
+
 
 ## Usage
 
 ### First-Time Setup (Install Dependencies)
 ```bash
-sudo python3 main.py --break
+sudo python3 torIPChangerScript.py --break
 ```
 
 ### Continuous IP Rotation (Every 10 seconds)
 ```bash
-sudo python3 main.py --break --continuous
+sudo python3 torIPChangerScript.py --break --continuous
 ```
 
 ### Custom Interval Rotation (Every 5 seconds example)
 ```bash
-sudo python3 main.py --break --continuous --interval 5
+sudo python3 torIPChangerScript.py --break --continuous --interval 5
 ```
 
 ### Single IP Change
 ```bash
-sudo python3 main.py --break
+sudo python3 torIPChangerScript.py --break
 ```
 
 ## How It Works
@@ -72,7 +89,7 @@ sudo python3 main.py --break
 
 ## File Structure
 
-- `main.py`: Main script file
+- `torIPChangerScript.py`: Main script file
 - `/etc/tor/torrc`: Tor configuration file (automatically modified by the script)
 
 ## Important Notes
