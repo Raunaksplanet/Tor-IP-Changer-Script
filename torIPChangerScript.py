@@ -142,14 +142,14 @@ Examples:
         """
     )
     
-    # action arguments
+    
     parser.add_argument(
         "--setup", "--break",
         action="store_true",
         help="Install dependencies and configure Tor"
     )
     
-    # operation mode arguments (mutually exclusive)
+    # mode arguments (mutually exclusive)
     mode_group = parser.add_mutually_exclusive_group()
     mode_group.add_argument(
         "--single",
@@ -162,7 +162,6 @@ Examples:
         help="Continuously change IP at specified intervals"
     )
     
-    # optional arguments
     parser.add_argument(
         "-i", "--interval",
         type=int,
@@ -185,13 +184,13 @@ def main():
     print("Tor IP Changer Script")
     print("=" * 40)
     
-    # handle setup if requested
+    # setup if requested
     if args.setup:
         install_dependencies()
         configure_tor()
         print()
 
-    # handle IP check only
+    # IP check only
     if args.check_ip:
         print(f"[+] Current IP: {get_ip()}")
         return
