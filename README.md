@@ -6,7 +6,7 @@ The Tor IP Changer Script is a Python utility designed to automate the process o
 
 ## Demo Video
 
-📹 [View Demo Video](https://github.com/Raunaksplanet/Tor-IP-Changer-Script/blob/main/Multimedia/DemoVideo.mp4)
+📹 [View Demo Video](https://youtu.be/D3N57GtJG5c)
 
 ## Features
 
