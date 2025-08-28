@@ -4,6 +4,10 @@
 
 The Tor IP Changer Script is a Python utility designed to automate the process of changing your IP address through the Tor network. It provides both single-use and continuous IP rotation capabilities, making it useful for privacy-conscious users, researchers, and developers who need to regularly change their network identity.
 
+## Demo Video
+
+📹 [View Demo Video](https://github.com/Raunaksplanet/Tor-IP-Changer-Script/blob/main/Multimedia/DemoVideo.mp4)
+
 ## Features
 
 - **Automatic Dependency Installation**: Installs required packages including Tor and Python dependencies
