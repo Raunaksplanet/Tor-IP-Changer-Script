@@ -42,9 +42,13 @@ CookieAuthentication 0
 
     # Try restarting Tor (WSL may not support systemctl)
     if shutil.which("systemctl"):
+        # Linux path
         subprocess.run(["sudo", "systemctl", "restart", "tor"])
-    else:
+    elif shutil.which("service"):
         subprocess.run(["sudo", "service", "tor", "restart"])
+    else:
+        # macOS / Homebrew path
+        subprocess.run(["brew", "services", "restart", "tor"])
     time.sleep(3)
 
     print("[+] Tor configured and (re)started.")
